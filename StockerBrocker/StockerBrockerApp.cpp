@@ -3,12 +3,6 @@
 #include <unordered_map>
 using namespace std;
 
-struct LoginInfo
-{
-	string id;
-	string password;
-};
-
 class StockerBrocker {
 public:
 	void selectStockBrocker(Adapter* adapter) {
