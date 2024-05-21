@@ -30,36 +30,72 @@ public:
 	AdapterMock mock;
 };
 
-
-TEST(TestCaseName, LoginSuccess) {
+class StockerbrokerFixture : public Test
+{
+public:
 	StockerBrocker app;
 	AdapterMock mock;
-	
-	app.selectStockBrocker(&mock);
 
-	string name = "Fake Name";
-	string password = "Fake Password";
-	
-	EXPECT_CALL(mock, login(name, password))
+	void SetUp() override
+	{
+		app.selectStockBrocker(&mock);
+	}
+
+	string NAME = "Fake Name";
+	string PASSWORD = "Fake Password";
+	string STOCK_CODE = "0xFF";
+};
+
+TEST_F(StockerbrokerFixture, LoginSuccess) {
+	EXPECT_CALL(mock, login(NAME, PASSWORD))
 		.Times(1);
-
-	app.login(name, password);
+	app.login(NAME, PASSWORD);
 }
 
-TEST(TestCaseName, BuySuccess) {
-	StockerBrocker app;
-	AdapterMock mock;
+TEST_F(StockerbrokerFixture, BuySuccess) {
+	int count = 10; 
+	int price = 10;
 
-	app.selectStockBrocker(&mock);
+	EXPECT_CALL(mock, buy(STOCK_CODE, count, price))
+		.Times(1);
+	app.buy(STOCK_CODE, count, price);
+}
 
-	string stockCode = "0xFF";
-	int count = 0; 
-	int price = 0;
+TEST_F(StockerbrokerFixture, Buy0CountFailException) {
+	EXPECT_THROW(app.buy(STOCK_CODE, 0, 100), exception);
+}
 
-	EXPECT_CALL(mock, buy(stockCode, count, price))
+TEST_F(StockerbrokerFixture, MinusPriceFailException) {
+	EXPECT_THROW(app.buy(STOCK_CODE, 100, -100), exception);
+}
+
+TEST_F(StockerbrokerFixture, SellSuccess) {
+	int count = 5;
+	int price = 1000;
+
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
 		.Times(1);
 
-	app.buy(stockCode, count, price);
+	app.sell(STOCK_CODE, count, price);
+}
+
+TEST_F(StockerbrokerFixture, SellZeroCountException) {
+	int count = 0;
+	int price = 1000;
+
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
+		.Times(0);
+
+	EXPECT_THROW(app.sell(STOCK_CODE, count, price), exception);
+}
+
+TEST_F(StockerbrokerFixture, SellZeroPriceException) {
+	int count = 5;
+	int price = 0;
+
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
+		.Times(0);	
+  EXPECT_THROW(app.sell(STOCK_CODE, count, price), exception);
 }
 
 TEST_F(CurrentPriceTestFixture, CurrentPriceSuccess) {
@@ -82,3 +118,4 @@ TEST_F(CurrentPriceTestFixture, CurrentPriceFail) {
 		EXPECT_EQ(string("Stock code must be 5 characters"), string(err.what()));
 	}
 }
+
