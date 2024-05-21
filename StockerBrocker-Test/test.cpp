@@ -16,44 +16,45 @@ public:
 	MOCK_METHOD(int, currentPrice, (string, int), (override));
 };
 
-TEST(TestCaseName, LoginSuccess) {
+class StockerbrokerFixture : public Test
+{
+public:
 	StockerBrocker app;
 	AdapterMock mock;
-	
-	app.selectStockBrocker(&mock);
 
-	string name = "Fake Name";
-	string password = "Fake Password";
-	
-	EXPECT_CALL(mock, login(name, password))
+	void SetUp() override
+	{
+		app.selectStockBrocker(&mock);
+	}
+
+	string NAME = "Fake Name";
+	string PASSWORD = "Fake Password";
+	string STOCK_CODE = "0xFF";
+};
+
+TEST_F(StockerbrokerFixture, LoginSuccess) {
+	EXPECT_CALL(mock, login(NAME, PASSWORD))
 		.Times(1);
-
-	app.login(name, password);
+	app.login(NAME, PASSWORD);
 }
 
-TEST(TestCaseName, BuySuccess) {
-	StockerBrocker app;
-	AdapterMock mock;
+TEST_F(StockerbrokerFixture, BuySuccess) {
+	int count = 10; 
+	int price = 10;
 
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
-	int count = 0; 
-	int price = 0;
-
-	EXPECT_CALL(mock, buy(stockCode, count, price))
+	EXPECT_CALL(mock, buy(STOCK_CODE, count, price))
 		.Times(1);
-
-	app.buy(stockCode, count, price);
+	app.buy(STOCK_CODE, count, price);
 }
 
-TEST(TestCaseName, SellSuccess) {
-	StockerBrocker app;
-	AdapterMock mock;
+TEST_F(StockerbrokerFixture, Buy0CountFailException) {
+	EXPECT_THROW(app.buy(STOCK_CODE, 0, 100), exception);
+}
 
-	app.selectStockBrocker(&mock);
+TEST_F(StockerbrokerFixture, MinusPriceFailException) {
+	EXPECT_THROW(app.buy(STOCK_CODE, 100, -100), exception);
 
-	string stockCode = "0xFF";
+TEST(StockerbrokerFixture, SellSuccess) {
 	int count = 5;
 	int price = 1000;
 
@@ -63,13 +64,7 @@ TEST(TestCaseName, SellSuccess) {
 	app.sell(stockCode, count, price);
 }
 
-TEST(TestCaseName, SellZeroCountException) {
-	StockerBrocker app;
-	AdapterMock mock;
-
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
+TEST(StockerbrokerFixture, SellZeroCountException) {
 	int count = 0;
 	int price = 1000;
 
@@ -79,13 +74,7 @@ TEST(TestCaseName, SellZeroCountException) {
 	EXPECT_THROW(app.sell(stockCode, count, price), exception);
 }
 
-TEST(TestCaseName, SellZeroPriceException) {
-	StockerBrocker app;
-	AdapterMock mock;
-
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
+TEST(StockerbrokerFixture, SellZeroPriceException) {
 	int count = 5;
 	int price = 0;
 
