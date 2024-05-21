@@ -39,7 +39,7 @@ TEST_F(StockerbrokerFixture, LoginSuccess) {
 }
 
 TEST_F(StockerbrokerFixture, BuySuccess) {
-	int count = 10; 
+	int count = 10;
 	int price = 10;
 
 	EXPECT_CALL(mock, buy(STOCK_CODE, count, price))
@@ -47,9 +47,36 @@ TEST_F(StockerbrokerFixture, BuySuccess) {
 
 	app.buy(STOCK_CODE, count, price);
 }
+
 TEST_F(StockerbrokerFixture, Buy0CountFailException) {
 	EXPECT_THROW(app.buy(STOCK_CODE, 0, 100), exception);
 }
+
 TEST_F(StockerbrokerFixture, MinusPriceFailException) {
 	EXPECT_THROW(app.buy(STOCK_CODE, 100, -100), exception);
+}
+
+TEST_F(StockerbrokerFixture, DISABLED_SellNiceTimingSuccess) {
+	int count = 100;
+	
+	EXPECT_CALL(mock, currentPrice(STOCK_CODE, 0))
+		.WillOnce(Return(100))
+		.WillOnce(Return(90))
+		.WillOnce(Return(70));
+
+	EXPECT_CALL(mock, buy(STOCK_CODE, count, app.currentPrice(STOCK_CODE, 0)))
+		.Times(1);
+
+	app.sellNiceTiming(STOCK_CODE, count);
+}
+
+TEST_F(StockerbrokerFixture, DISABLED_SellNiceTimingFail) {
+	int count = 100;
+
+	EXPECT_CALL(mock, currentPrice(STOCK_CODE, 0))
+		.WillOnce(Return(100))
+		.WillOnce(Return(90))
+		.WillOnce(Return(95));
+
+	EXPECT_THROW(app.sellNiceTiming(STOCK_CODE, count), exception);
 }
