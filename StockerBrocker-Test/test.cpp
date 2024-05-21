@@ -8,8 +8,6 @@
 using namespace std;
 using namespace testing;
 
-int MAX_BUY_COUNT = 100;
-
 class AdapterMock : public Adapter
 {
 public:
@@ -19,98 +17,77 @@ public:
 	MOCK_METHOD(int, currentPrice, (string, int), (override));
 };
 
-TEST(TestCaseName, LoginSuccess)
+class CurrentPriceTestFixture : public testing::Test
 {
+public:
+	void SetUp()
+	{
+		app.selectStockBrocker(&mock);
+	}
+	const int CUR_PRICE = 1000;
+	const int CUR_MINETUE = 0;
+	const string STOCK_CODE = "ABC12";
+	const string WRONG_STOCK_CODE = "A1";
+
+	StockerBrocker app;
+	AdapterMock mock;
+};
+
+class StockerbrokerFixture : public Test
+{
+public:
 	StockerBrocker app;
 	AdapterMock mock;
 
-	app.selectStockBrocker(&mock);
+	void SetUp() override
+	{
+		app.selectStockBrocker(&mock);
+	}
 
-	string name = "Fake Name";
-	string password = "Fake Password";
+	string NAME = "Fake Name";
+	string PASSWORD = "Fake Password";
+	string STOCK_CODE = "0xFF";
+};
 
-	EXPECT_CALL(mock, login(name, password))
+TEST_F(StockerbrokerFixture, LoginSuccess)
+{
+	EXPECT_CALL(mock, login(NAME, PASSWORD))
 		.Times(1);
-
-	app.login(name, password);
+	app.login(NAME, PASSWORD);
 }
 
-TEST(TestCaseName, BuySuccess)
+TEST_F(StockerbrokerFixture, BuySuccess)
 {
-	StockerBrocker app;
-	AdapterMock mock;
+	int count = 10;
+	int price = 10;
 
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
-	int count = 0;
-	int price = 0;
-
-	EXPECT_CALL(mock, buy(stockCode, count, price))
+	EXPECT_CALL(mock, buy(STOCK_CODE, count, price))
 		.Times(1);
-
-	app.buy(stockCode, count, price);
+	app.buy(STOCK_CODE, count, price);
 }
-
-TEST(TestCaseName, getPriceSuccess)
+TEST_F(CurrentPriceTestFixture, BuyNiceTimingWhenBuyCase)
 {
-	StockerBrocker app;
-	AdapterMock mock;
+	const int MAX_BUY_COUNT = 100;
 
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
-	int count = 0;
-	int price = 0;
-
-	EXPECT_CALL(mock, currentPrice(stockCode, 1))
-		.Times(1);
-
-	app.currentPrice(stockCode, 1);
-
-	EXPECT_CALL(mock, currentPrice(stockCode, 1))
-		.Times(1);
-
-	app.currentPrice(stockCode, 1);
-}
-
-TEST(TestCaseName, BuyNiceTimingWhenBuyCase)
-{
-	StockerBrocker app;
-	AdapterMock mock;
-
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
-	int count = 0;
-	int price = 0;
-
-	EXPECT_CALL(mock, currentPrice(stockCode,0)).
+	EXPECT_CALL(mock, currentPrice(STOCK_CODE,0)).
 		WillOnce(Return(100)).
 		WillOnce(Return(120)).
 		WillOnce(Return(140));
 
-	EXPECT_CALL(mock, buy(stockCode, MAX_BUY_COUNT, price)).Times(1);
+	EXPECT_CALL(mock, buy(STOCK_CODE, MAX_BUY_COUNT, CUR_PRICE)).Times(1);
 
-	app.buyNiceTiming(stockCode, price);
+	app.buyNiceTiming(STOCK_CODE, CUR_PRICE);
 }
-TEST(TestCaseName, BuyNiceTimingWhenNotBuyCase)
+TEST_F(CurrentPriceTestFixture, BuyNiceTimingWhenNotBuyCase)
 {
-	StockerBrocker app;
-	AdapterMock mock;
+	const int MAX_BUY_COUNT = 100;
 
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "0xFF";
-	int count = 0;
-	int price = 0;
-
-	EXPECT_CALL(mock, currentPrice(stockCode, 0)).
+	EXPECT_CALL(mock, currentPrice(STOCK_CODE, 0)).
 		WillOnce(Return(100)).
 		WillOnce(Return(180)).
 		WillOnce(Return(140));
 
-	EXPECT_CALL(mock, buy(stockCode, MAX_BUY_COUNT, price)).Times(0);
-	app.buyNiceTiming(stockCode, price);
+	EXPECT_CALL(mock, buy(STOCK_CODE, MAX_BUY_COUNT, CUR_PRICE)).Times(0);
+	app.buyNiceTiming(STOCK_CODE, CUR_PRICE);
 
 }

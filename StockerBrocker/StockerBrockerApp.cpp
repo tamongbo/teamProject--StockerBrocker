@@ -44,10 +44,7 @@ public:
 			priceHistory[i] = adapter->currentPrice(stockCode, 0);
 			Sleep(priceCheckPriod);
 			if (priceHistory[i - 1] >= priceHistory[i])
-			{
-				std::cout << priceHistory[i-1] << priceHistory[i] << std::endl;
 				return false;
-			}
 		}
 		return true;
 	}
