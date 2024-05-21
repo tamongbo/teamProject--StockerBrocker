@@ -32,7 +32,11 @@ public:
 	}
 
 	int currentPrice(string stockCode, int minutes) {
-		adapter->currentPrice(stockCode, minutes);
+		return adapter->currentPrice(stockCode, minutes);
+	}
+
+	void sellNiceTiming(string stockCode, int price) {
+
 	}
 
 private:
