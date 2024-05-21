@@ -31,6 +31,30 @@ TEST(TestCaseName, LoginSuccess) {
 	app.login(name, password);
 }
 
+TEST(TestCaseName, LoginFail) {
+	StockerBrocker app;
+	AdapterMock mock;
+
+	app.selectStockBrocker(&mock);
+
+	string name = "Fake Name";
+	string password = "Fake Password";
+
+	EXPECT_CALL(mock, login(name, password))
+		.Times(1);
+	try
+	{
+	    app.login(name, password);
+		app.login(name, password);
+		FAIL();
+	}
+	catch (invalid_argument& err)
+	{
+		EXPECT_EQ(string("Already registered id"), string(err.what()));
+	}
+	
+}
+
 TEST(TestCaseName, BuySuccess) {
 	StockerBrocker app;
 	AdapterMock mock;
