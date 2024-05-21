@@ -13,10 +13,10 @@ public:
 	MOCK_METHOD(void, login, (string, string), (override));
 	MOCK_METHOD(void, buy, (string, int, int), (override));
 	MOCK_METHOD(void, sell, (string, int, int), (override));
-	MOCK_METHOD(int, currentPrice, (string, int), (override));
+	MOCK_METHOD(int, currentPrice, (string), (override));
 };
 
-TEST(TestCaseName, LoginSuccess) {
+TEST(StockBrockerTest, LoginSuccess) {
 	StockerBrocker app;
 	AdapterMock mock;
 	
@@ -31,7 +31,7 @@ TEST(TestCaseName, LoginSuccess) {
 	app.login(name, password);
 }
 
-TEST(TestCaseName, BuySuccess) {
+TEST(StockBrockerTest, BuySuccess) {
 	StockerBrocker app;
 	AdapterMock mock;
 
@@ -46,3 +46,4 @@ TEST(TestCaseName, BuySuccess) {
 
 	app.buy(stockCode, count, price);
 }
+

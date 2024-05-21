@@ -10,7 +10,7 @@ public:
 	virtual void login(string ID, string password) = 0;
 	virtual void buy(string stockCode, int count, int price) = 0;
 	virtual void sell(string stockCode, int count, int price) = 0;
-	virtual int currentPrice(string stockCode, int minutes) = 0;
+	virtual int currentPrice(string stockCode) = 0;
 };
 
 class AdapterKiwerAPI : public Adapter {
@@ -28,7 +28,7 @@ public:
 	{
 		api.sell(stockCode, count, price);
 	}
-	int currentPrice(string stockCode, int minutes) override
+	int currentPrice(string stockCode) override
 	{
 		return api.currentPrice(stockCode);
 	}
@@ -51,9 +51,9 @@ public:
 	{
 		api.sellingStock(stockCode, price, count);
 	}
-	int currentPrice(string stockCode, int minutes) override
+	int currentPrice(string stockCode) override
 	{
-		return api.getMarketPrice(stockCode, minutes);
+		return api.getMarketPrice(stockCode, 0);
 	}
 private:
 	NemoAPI api;

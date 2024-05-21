@@ -19,8 +19,8 @@ public:
 		adapter->sell(stockCode, count, price);
 	}
 
-	int currentPrice(string stockCode, int minutes) {
-		adapter->currentPrice(stockCode, minutes);
+	int currentPrice(string stockCode) {
+		adapter->currentPrice(stockCode);
 	}
 
 private:
