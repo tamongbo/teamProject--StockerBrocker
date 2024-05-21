@@ -1,5 +1,6 @@
 #pragma once
 #include "Adapter.cpp"
+#include<vector>
 
 class StockerBrocker {
 public:
@@ -40,11 +41,24 @@ public:
 		return adapter->currentPrice(stockCode, minutes);
 	}
 
-	void sellNiceTiming(string stockCode, int price) {
+	void sellNiceTiming(string stockCode, int count) {
+		int const ONE_MINETUE = 1;	// 실제론 60000
 
+		vector<int> prices;
+		for (int i = 0; i < 3; i++) {
+			Sleep(ONE_MINETUE);
+			prices.push_back(adapter->currentPrice(stockCode, 0));
+		}
+
+		if (prices[0] <= prices[1] || prices[1] <= prices[2]) {
+			throw std::exception("");
+		}
+
+		adapter->buy(stockCode, count, prices[2]);
 	}
 
 private:
 	Adapter* adapter;
 	const int STOCK_CODE_LENGTH = 5;
+
 };

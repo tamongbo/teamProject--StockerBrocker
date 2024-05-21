@@ -16,6 +16,18 @@ public:
 	MOCK_METHOD(int, currentPrice, (string, int), (override));
 };
 
+class SellNiceTimingTestFixture : public testing::Test {
+public:
+	void SetUp() {
+		app.selectStockBrocker(&mock);
+	}
+	const string STOCK_CODE = "ABC12";
+	const int COUNT = 10;
+
+	StockerBrocker app;
+	AdapterMock mock;
+};
+
 class CurrentPriceTestFixture : public testing::Test {
 public:
 	void SetUp() {
@@ -43,7 +55,7 @@ public:
 
 	string NAME = "Fake Name";
 	string PASSWORD = "Fake Password";
-	string STOCK_CODE = "0xFF";
+	string STOCK_CODE = "ABC12";
 };
 
 TEST_F(StockerbrokerFixture, LoginSuccess) {
@@ -69,22 +81,23 @@ TEST_F(StockerbrokerFixture, MinusPriceFailException) {
 	EXPECT_THROW(app.buy(STOCK_CODE, 100, -100), exception);
 }
 
-TEST_F(StockerbrokerFixture, DISABLED_SellNiceTimingSuccess) {
-	int count = 100;
+TEST_F(StockerbrokerFixture, SellNiceTimingSuccess) {
+	const int count = 100;
+	const int lastCurrentPrice = 70;
 	
 	EXPECT_CALL(mock, currentPrice(STOCK_CODE, 0))
 		.WillOnce(Return(100))
 		.WillOnce(Return(90))
-		.WillOnce(Return(70));
+		.WillOnce(Return(lastCurrentPrice));
 
-	EXPECT_CALL(mock, buy(STOCK_CODE, count, app.currentPrice(STOCK_CODE, 0)))
+	EXPECT_CALL(mock, buy(STOCK_CODE, count, lastCurrentPrice))
 		.Times(1);
 
 	app.sellNiceTiming(STOCK_CODE, count);
 }
 
-TEST_F(StockerbrokerFixture, DISABLED_SellNiceTimingFail) {
-	int count = 100;
+TEST_F(StockerbrokerFixture, SellNiceTimingFail) {
+	const int count = 100;
 
 	EXPECT_CALL(mock, currentPrice(STOCK_CODE, 0))
 		.WillOnce(Return(100))
@@ -143,4 +156,3 @@ TEST_F(CurrentPriceTestFixture, CurrentPriceFail) {
 		EXPECT_EQ(string("Stock code must be 5 characters"), string(err.what()));
 	}
 }
-
