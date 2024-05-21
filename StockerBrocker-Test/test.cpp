@@ -53,33 +53,34 @@ TEST_F(StockerbrokerFixture, Buy0CountFailException) {
 
 TEST_F(StockerbrokerFixture, MinusPriceFailException) {
 	EXPECT_THROW(app.buy(STOCK_CODE, 100, -100), exception);
+}
 
-TEST(StockerbrokerFixture, SellSuccess) {
+TEST_F(StockerbrokerFixture, SellSuccess) {
 	int count = 5;
 	int price = 1000;
 
-	EXPECT_CALL(mock, sell(stockCode, count, price))
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
 		.Times(1);
 
-	app.sell(stockCode, count, price);
+	app.sell(STOCK_CODE, count, price);
 }
 
-TEST(StockerbrokerFixture, SellZeroCountException) {
+TEST_F(StockerbrokerFixture, SellZeroCountException) {
 	int count = 0;
 	int price = 1000;
 
-	EXPECT_CALL(mock, sell(stockCode, count, price))
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
 		.Times(0);
 
-	EXPECT_THROW(app.sell(stockCode, count, price), exception);
+	EXPECT_THROW(app.sell(STOCK_CODE, count, price), exception);
 }
 
-TEST(StockerbrokerFixture, SellZeroPriceException) {
+TEST_F(StockerbrokerFixture, SellZeroPriceException) {
 	int count = 5;
 	int price = 0;
 
-	EXPECT_CALL(mock, sell(stockCode, count, price))
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
 		.Times(0);
 
-	EXPECT_THROW(app.sell(stockCode, count, price), exception);
+	EXPECT_THROW(app.sell(STOCK_CODE, count, price), exception);
 }
