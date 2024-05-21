@@ -46,3 +46,51 @@ TEST(TestCaseName, BuySuccess) {
 
 	app.buy(stockCode, count, price);
 }
+
+TEST(TestCaseName, SellSuccess) {
+	StockerBrocker app;
+	AdapterMock mock;
+
+	app.selectStockBrocker(&mock);
+
+	string stockCode = "0xFF";
+	int count = 5;
+	int price = 1000;
+
+	EXPECT_CALL(mock, sell(stockCode, count, price))
+		.Times(1);
+
+	app.sell(stockCode, count, price);
+}
+
+TEST(TestCaseName, SellZeroCountException) {
+	StockerBrocker app;
+	AdapterMock mock;
+
+	app.selectStockBrocker(&mock);
+
+	string stockCode = "0xFF";
+	int count = 0;
+	int price = 1000;
+
+	EXPECT_CALL(mock, sell(stockCode, count, price))
+		.Times(0);
+
+	EXPECT_THROW(app.sell(stockCode, count, price), exception);
+}
+
+TEST(TestCaseName, SellZeroPriceException) {
+	StockerBrocker app;
+	AdapterMock mock;
+
+	app.selectStockBrocker(&mock);
+
+	string stockCode = "0xFF";
+	int count = 5;
+	int price = 0;
+
+	EXPECT_CALL(mock, sell(stockCode, count, price))
+		.Times(0);
+
+	EXPECT_THROW(app.sell(stockCode, count, price), exception);
+}

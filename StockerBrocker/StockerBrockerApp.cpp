@@ -16,6 +16,13 @@ public:
 	}
 
 	void sell(string stockCode, int count, int price) {
+		if (count <= 0) {
+			throw exception("1개 이상의 매도 주문만 설정 가능합니다.");
+		}
+
+		if (price <= 0) {
+			throw exception("1원 이상의 매도 주문만 설정 가능합니다.");
+		}
 		adapter->sell(stockCode, count, price);
 	}
 
