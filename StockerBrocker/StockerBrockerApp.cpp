@@ -1,5 +1,13 @@
 #pragma once
 #include "Adapter.cpp"
+#include <unordered_map>
+using namespace std;
+
+struct LoginInfo
+{
+	string id;
+	string password;
+};
 
 class StockerBrocker {
 public:
@@ -8,6 +16,11 @@ public:
 	}
 
 	void login(string ID, string password) {
+		if (loginInfo.find(ID) != loginInfo.end())
+		{
+			throw invalid_argument("Already registered id");
+		}
+		loginInfo.insert(make_pair(ID, password));
 		adapter->login(ID, password);
 	}
 
@@ -25,4 +38,5 @@ public:
 
 private:
 	Adapter* adapter;
+	unordered_map<string, string> loginInfo;
 };
