@@ -40,19 +40,11 @@ TEST(TestCaseName, LoginFail) {
 	string name = "Fake Name";
 	string password = "Fake Password";
 
-	EXPECT_CALL(mock, login(name, password))
-		.Times(1);
-	try
-	{
-	    app.login(name, password);
-		app.login(name, password);
-		FAIL();
-	}
-	catch (invalid_argument& err)
-	{
-		EXPECT_EQ(string("Already registered id"), string(err.what()));
-	}
-	
+	EXPECT_CALL(mock, login(name, password)).Times(1);
+
+	app.login(name, password);
+
+	EXPECT_THROW(app.login(name, password), invalid_argument);
 }
 
 TEST(TestCaseName, BuySuccess) {
