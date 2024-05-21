@@ -16,6 +16,21 @@ public:
 	MOCK_METHOD(int, currentPrice, (string, int), (override));
 };
 
+class CurrentPriceTestFixture : public testing::Test {
+public:
+	void SetUp() {
+		app.selectStockBrocker(&mock);
+	}
+	const int CUR_PRICE = 1000;
+	const int CUR_MINETUE = 0;
+	const string STOCK_CODE = "ABC12";
+	const string WRONG_STOCK_CODE = "A1";
+
+	StockerBrocker app;
+	AdapterMock mock;
+};
+
+
 TEST(TestCaseName, LoginSuccess) {
 	StockerBrocker app;
 	AdapterMock mock;
@@ -47,37 +62,20 @@ TEST(TestCaseName, BuySuccess) {
 	app.buy(stockCode, count, price);
 }
 
-TEST(TestCaseName, CurrentPriceSuccess) {
-	StockerBrocker app;
-	AdapterMock mock;
-
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "ABCDE";
-	int minute = 0;
-
-	int price = 1000;
-	EXPECT_CALL(mock, currentPrice(stockCode, minute))
+TEST_F(CurrentPriceTestFixture, CurrentPriceSuccess) {
+	EXPECT_CALL(mock, currentPrice(STOCK_CODE, CUR_MINETUE))
 		.Times(1)
-		.WillOnce(testing::Return(price));
+		.WillOnce(testing::Return(CUR_PRICE));
 
-	EXPECT_EQ(price, app.currentPrice(stockCode, minute));
+	EXPECT_EQ(CUR_PRICE, app.currentPrice(STOCK_CODE, CUR_MINETUE));
 }
 
-TEST(TestCaseName, CurrentPriceFail) {
-	StockerBrocker app;
-	AdapterMock mock;
-
-	app.selectStockBrocker(&mock);
-
-	string stockCode = "AA";
-	int minute = 0;
-
-	EXPECT_CALL(mock, currentPrice(stockCode, minute))
+TEST_F(CurrentPriceTestFixture, CurrentPriceFail) {
+	EXPECT_CALL(mock, currentPrice(WRONG_STOCK_CODE, CUR_MINETUE))
 		.Times(0);
 
 	try {
-		app.currentPrice(stockCode, minute);
+		app.currentPrice(WRONG_STOCK_CODE, CUR_MINETUE);
 		FAIL();
 	}
 	catch (invalid_argument& err) {
