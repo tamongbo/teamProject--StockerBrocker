@@ -20,9 +20,13 @@ public:
 	}
 
 	int currentPrice(string stockCode, int minutes) {
-		adapter->currentPrice(stockCode, minutes);
+		if (stockCode.length() != STOCK_CODE_LENGTH)
+			throw invalid_argument("Stock code must be 5 characters");
+
+		return adapter->currentPrice(stockCode, minutes);
 	}
 
 private:
 	Adapter* adapter;
+	const int STOCK_CODE_LENGTH = 5;
 };

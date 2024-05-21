@@ -46,3 +46,41 @@ TEST(TestCaseName, BuySuccess) {
 
 	app.buy(stockCode, count, price);
 }
+
+TEST(TestCaseName, CurrentPriceSuccess) {
+	StockerBrocker app;
+	AdapterMock mock;
+
+	app.selectStockBrocker(&mock);
+
+	string stockCode = "ABCDE";
+	int minute = 0;
+
+	int price = 1000;
+	EXPECT_CALL(mock, currentPrice(stockCode, minute))
+		.Times(1)
+		.WillOnce(testing::Return(price));
+
+	EXPECT_EQ(price, app.currentPrice(stockCode, minute));
+}
+
+TEST(TestCaseName, CurrentPriceFail) {
+	StockerBrocker app;
+	AdapterMock mock;
+
+	app.selectStockBrocker(&mock);
+
+	string stockCode = "AA";
+	int minute = 0;
+
+	EXPECT_CALL(mock, currentPrice(stockCode, minute))
+		.Times(0);
+
+	try {
+		app.currentPrice(stockCode, minute);
+		FAIL();
+	}
+	catch (invalid_argument& err) {
+		EXPECT_EQ(string("Stock code must be 5 characters"), string(err.what()));
+	}
+}
