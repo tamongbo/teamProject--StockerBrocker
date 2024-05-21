@@ -128,6 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="KiwerAPI.cpp" />
+    <ClCompile Include="NemoAPI.cpp" />
+    <ClCompile Include="Adapter.cpp" />
+    <ClCompile Include="StockerBrockerApp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
