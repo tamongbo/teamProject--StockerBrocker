@@ -16,30 +16,29 @@ public:
 	MOCK_METHOD(int, currentPrice, (string, int), (override));
 };
 
-TEST(TestCaseName, LoginSuccess) {
+class LogintestFixture : public testing::Test
+{
+public:
 	StockerBrocker app;
 	AdapterMock mock;
-	
-	app.selectStockBrocker(&mock);
 
-	string name = "Fake Name";
-	string password = "Fake Password";
-	
+	const string name = "Fake Name";
+	const string password = "Fake Password";
+
+	void SetUp() override
+	{
+		app.selectStockBrocker(&mock);
+	}
+};
+
+TEST_F(LogintestFixture, LoginSuccess) {
 	EXPECT_CALL(mock, login(name, password))
 		.Times(1);
 
 	app.login(name, password);
 }
 
-TEST(TestCaseName, LoginFail) {
-	StockerBrocker app;
-	AdapterMock mock;
-
-	app.selectStockBrocker(&mock);
-
-	string name = "Fake Name";
-	string password = "Fake Password";
-
+TEST_F(LogintestFixture, LoginFail) {
 	EXPECT_CALL(mock, login(name, password)).Times(1);
 
 	app.login(name, password);
