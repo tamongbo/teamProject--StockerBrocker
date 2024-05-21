@@ -12,6 +12,11 @@ public:
 	}
 
 	void buy(string stockCode, int count, int price) {
+		if (count <= 0)
+			throw exception("StockerBrockerBuy0CountException");
+		if (price <= 0)
+			throw exception("StockerBrockerPriceException");
+
 		adapter->buy(stockCode, count, price);
 	}
 
