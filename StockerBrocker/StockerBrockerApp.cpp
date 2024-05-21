@@ -22,16 +22,21 @@ public:
 
 	void sell(string stockCode, int count, int price) {
 		if (count <= 0) {
-			throw exception("1°³ ÀÌ»óÀÇ ¸Åµµ ÁÖ¹®¸¸ ¼³Á¤ °¡´ÉÇÕ´Ï´Ù.");
+			throw exception("1ê°œ ì´ìƒì˜ ë§¤ë„ ì£¼ë¬¸ë§Œ ì„¤ì • ê°€ëŠ¥í•©ë‹ˆë‹¤.");
 		}
 
 		if (price <= 0) {
-			throw exception("1¿ø ÀÌ»óÀÇ ¸Åµµ ÁÖ¹®¸¸ ¼³Á¤ °¡´ÉÇÕ´Ï´Ù.");
+			throw exception("1ì› ì´ìƒì˜ ë§¤ë„ ì£¼ë¬¸ë§Œ ì„¤ì • ê°€ëŠ¥í•©ë‹ˆë‹¤.");
 		}
 		adapter->sell(stockCode, count, price);
 	}
 
 	int currentPrice(string stockCode, int minutes) {
+		if (stockCode.length() != STOCK_CODE_LENGTH)
+			throw invalid_argument("Stock code must be 5 characters");
+
+		return adapter->currentPrice(stockCode, minutes);
+
 		return adapter->currentPrice(stockCode, minutes);
 	}
 
@@ -41,4 +46,5 @@ public:
 
 private:
 	Adapter* adapter;
+	const int STOCK_CODE_LENGTH = 5;
 };

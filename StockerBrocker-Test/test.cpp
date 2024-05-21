@@ -16,6 +16,20 @@ public:
 	MOCK_METHOD(int, currentPrice, (string, int), (override));
 };
 
+class CurrentPriceTestFixture : public testing::Test {
+public:
+	void SetUp() {
+		app.selectStockBrocker(&mock);
+	}
+	const int CUR_PRICE = 1000;
+	const int CUR_MINETUE = 0;
+	const string STOCK_CODE = "ABC12";
+	const string WRONG_STOCK_CODE = "A1";
+
+	StockerBrocker app;
+	AdapterMock mock;
+};
+
 class StockerbrokerFixture : public Test
 {
 public:
@@ -105,7 +119,28 @@ TEST_F(StockerbrokerFixture, SellZeroPriceException) {
 	int price = 0;
 
 	EXPECT_CALL(mock, sell(STOCK_CODE, count, price))
+		.Times(0);	
+  EXPECT_THROW(app.sell(STOCK_CODE, count, price), exception);
+}
+
+TEST_F(CurrentPriceTestFixture, CurrentPriceSuccess) {
+	EXPECT_CALL(mock, currentPrice(STOCK_CODE, CUR_MINETUE))
+		.Times(1)
+		.WillOnce(testing::Return(CUR_PRICE));
+
+	EXPECT_EQ(CUR_PRICE, app.currentPrice(STOCK_CODE, CUR_MINETUE));
+}
+
+TEST_F(CurrentPriceTestFixture, CurrentPriceFail) {
+	EXPECT_CALL(mock, currentPrice(WRONG_STOCK_CODE, CUR_MINETUE))
 		.Times(0);
 
-	EXPECT_THROW(app.sell(STOCK_CODE, count, price), exception);
+	try {
+		app.currentPrice(WRONG_STOCK_CODE, CUR_MINETUE);
+		FAIL();
+	}
+	catch (invalid_argument& err) {
+		EXPECT_EQ(string("Stock code must be 5 characters"), string(err.what()));
+	}
 }
+
