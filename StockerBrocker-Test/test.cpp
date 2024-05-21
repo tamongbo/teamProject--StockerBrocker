@@ -77,7 +77,7 @@ TEST_F(StockerbrokerFixture, DISABLED_SellNiceTimingSuccess) {
 		.WillOnce(Return(90))
 		.WillOnce(Return(70));
 
-	EXPECT_CALL(mock, buy(STOCK_CODE, count, app.currentPrice(STOCK_CODE, 0)))
+	EXPECT_CALL(mock, sell(STOCK_CODE, count, app.currentPrice(STOCK_CODE, 0)))
 		.Times(1);
 
 	app.sellNiceTiming(STOCK_CODE, count);
